@@ -1,0 +1,21 @@
+name: CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Docker
+        run: |
+          docker build -t fastapi-app .
+          docker stop fastapi-container || true
+          docker rm fastapi-container || true
+          docker run -d --name fastapi-container -p 8000:8000 fastapi-app
